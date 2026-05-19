@@ -285,11 +285,7 @@ No build tools, no npm, no bundler complexity. The frontend loads instantly and 
 
 ---
 
-## 📸 Screenshots
 
-> Run the app locally and explore all 4 analysis modes: Text, Voice, Image, and Live Webcam.
-
----
 
 
 
