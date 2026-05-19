@@ -291,16 +291,12 @@ No build tools, no npm, no bundler complexity. The frontend loads instantly and 
 
 ---
 
-## 📄 License
 
-MIT License — free to use, modify, and distribute.
-
----
 
 <div align="center">
 
 Built by **Rohan Ramgopal** · [GitHub](https://github.com/rohanramgopal)
 
-⭐ Star this repo if you found it useful!
+
 
 </div>
