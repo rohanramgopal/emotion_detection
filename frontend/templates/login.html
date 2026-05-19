@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In — Fresh Emotion</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo"><span class="emoji">🎭</span><span class="title">Fresh Emotion</span></div>
+        <ul class="nav-links"><li><a href="/">← Home</a></li></ul>
+    </div>
+</nav>
+<div class="auth-container">
+    <div class="auth-card slide-in">
+        <h1>👋 Welcome Back</h1>
+        <p>Sign in to your Fresh Emotion account</p>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" placeholder="Enter username" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary btn-full" style="margin-top:.5rem;">Sign In →</button>
+            <div id="errorMessage" class="error-message"></div>
+        </form>
+        <p class="auth-link">Don't have an account? <a href="/register.html">Register here</a></p>
+    </div>
+</div>
+<script src="/static/js/auth.js?v=2"></script>
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type=submit]');
+    const err = document.getElementById('errorMessage');
+    btn.textContent = 'Signing in...'; btn.disabled = true; err.style.display='none';
+    try {
+        const r = await fetch('/api/auth/token/', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({username: document.getElementById('username').value, password: document.getElementById('password').value})
+        });
+        if (!r.ok) throw new Error('Invalid credentials. Please try again.');
+        const d = await r.json();
+        localStorage.setItem('access_token', d.access);
+        localStorage.setItem('refresh_token', d.refresh);
+        localStorage.setItem('username', document.getElementById('username').value);
+        window.location.href = '/analysis.html';
+    } catch (error) {
+        err.textContent = error.message; err.style.display='block';
+        btn.textContent = 'Sign In →'; btn.disabled = false;
+    }
+});
+</script>
+</body>
+</html>

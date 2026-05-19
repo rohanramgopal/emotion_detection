@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - EmotiSense</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
+    
+</head>
+<body class="light-mode">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="emoji">🎭</span>
+                <span class="title">EmotiSense</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="auth-container">
+        <div class="auth-card slide-in">
+            <h1>Create Account</h1>
+            <p>Join EmotiSense today</p>
+            
+            <form id="registerForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required minlength="3">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required minlength="8">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password_confirm">Confirm Password</label>
+                    <input type="password" id="password_confirm" name="password_confirm" required minlength="8">
+                </div>
+                
+                <div class="form-group">
+                    <label for="first_name">First Name (Optional)</label>
+                    <input type="text" id="first_name" name="first_name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="last_name">Last Name (Optional)</label>
+                    <input type="text" id="last_name" name="last_name">
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-full">Register</button>
+                <div id="errorMessage" class="error-message"></div>
+            </form>
+            
+            <p class="auth-link">Already have an account? <a href="/login.html">Login here</a></p>
+        </div>
+    </div>
+
+    <script src="/static/js/auth.js?v=2"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: document.getElementById('password').value,
+                password_confirm: document.getElementById('password_confirm').value,
+                first_name: document.getElementById('first_name').value,
+                last_name: document.getElementById('last_name').value,
+            };
+            
+            if (formData.password !== formData.password_confirm) {
+                document.getElementById('errorMessage').textContent = 'Passwords do not match';
+                document.getElementById('errorMessage').style.display = 'block';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/auth/register/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(Object.values(data)[0][0] || 'Registration failed');
+                }
+                
+                const data = await response.json();
+                localStorage.setItem('access_token', data.access);
+                localStorage.setItem('refresh_token', data.refresh);
+                localStorage.setItem('username', formData.username);
+                
+                window.location.href = '/dashboard.html';
+            } catch (error) {
+                document.getElementById('errorMessage').textContent = error.message;
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

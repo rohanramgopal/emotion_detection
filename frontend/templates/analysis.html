@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Analysis — Fresh Emotion</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
+</head>
+<body>
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo"><span class="emoji">🎭</span><span class="title">Fresh Emotion</span></div>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/dashboard.html">Dashboard</a></li>
+            <li><a href="/analysis.html" class="active">Analyze</a></li>
+            <li><a href="#" onclick="logout()" class="btn btn-danger" style="padding:.4rem .9rem;font-size:.8rem;">Logout</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div class="container">
+    <h1 class="page-title">Emotion Scanner</h1>
+    <p class="page-sub">Choose an input method — AI will detect your emotion in seconds</p>
+
+    <div class="analysis-tabs">
+        <button class="tab-btn active" onclick="switchTab('text',this)">📝 Text</button>
+        <button class="tab-btn" onclick="switchTab('voice',this)">🎤 Voice</button>
+        <button class="tab-btn" onclick="switchTab('image',this)">🖼️ Image</button>
+        <button class="tab-btn" onclick="switchTab('live',this)">📹 Live</button>
+    </div>
+
+    <!-- TEXT -->
+    <div id="text" class="tab-content active">
+        <div class="analysis-card">
+            <h2>Text Analysis</h2>
+            <p>Type or paste text — AI reads the emotional tone instantly</p>
+            <textarea id="textInput" class="form-textarea" placeholder="How are you feeling? Type anything here..." rows="6"></textarea>
+            <button class="btn btn-scan" onclick="analyzeText()" style="width:100%;justify-content:center;">⚡ Scan Text Emotion</button>
+            <div id="textLoading" class="loading hidden"><div class="scan-loader"><div class="scan-circle"></div><div class="scan-text">Analyzing...</div></div></div>
+        </div>
+    </div>
+
+    <!-- VOICE -->
+    <div id="voice" class="tab-content">
+        <div class="analysis-card">
+            <h2>Voice Analysis</h2>
+            <p>Tap the mic — speak freely, AI transcribes and analyzes your emotion</p>
+            <div class="voice-btn-wrap">
+                <div id="recordRing" class="record-ring" onclick="toggleRecording()">
+                    <div class="record-inner" id="recordIcon">🎙️</div>
+                </div>
+                <span class="record-label" id="recordLabel">Tap to start recording</span>
+            </div>
+            <div id="transcript" class="transcript-box hidden">
+                <h3>Transcript</h3>
+                <p id="transcriptText"></p>
+            </div>
+            <div id="voiceLoading" class="loading hidden"><div class="scan-loader"><div class="scan-circle"></div><div class="scan-text">Processing voice...</div></div></div>
+        </div>
+    </div>
+
+    <!-- IMAGE -->
+    <div id="image" class="tab-content">
+        <div class="analysis-card">
+            <h2>Image / Selfie Analysis</h2>
+            <p>Upload a photo — Gemini Vision reads your facial expression</p>
+            <div class="image-upload" id="uploadZone" onclick="document.getElementById('imageInput').click()">
+                <span class="upload-icon" id="uploadIcon">📷</span>
+                <p class="upload-text" id="uploadLabel">Click to upload image or selfie</p>
+                <p class="upload-sub">Supports JPG, PNG, WEBP</p>
+                <input type="file" id="imageInput" accept="image/*" style="display:none;" onchange="previewImage()">
+            </div>
+            <img id="imagePreview" class="image-preview hidden" alt="Preview">
+            <button class="btn btn-scan" id="analyzeImageBtn" onclick="analyzeImage()" style="display:none;width:100%;justify-content:center;">🔍 Scan Image Emotion</button>
+            <div id="imageLoading" class="loading hidden"><div class="scan-loader"><div class="scan-circle"></div><div class="scan-text">Scanning face...</div></div></div>
+        </div>
+    </div>
+
+    <!-- LIVE -->
+    <div id="live" class="tab-content">
+        <div class="analysis-card">
+            <h2>Live Webcam Scanner</h2>
+            <p>Real-time emotion detection — updates every 4 seconds</p>
+            <div class="video-container" id="videoContainer">
+                <video id="webcamVideo" autoplay playsinline muted></video>
+                <div class="scan-overlay"></div>
+            </div>
+            <div class="video-controls">
+                <button id="startLiveBtn" class="btn btn-scan" onclick="startLiveAnalysis()" style="flex:1;justify-content:center;">📹 Start Live Scan</button>
+                <button id="stopLiveBtn" class="btn btn-danger hidden" onclick="stopLiveAnalysis()">⏹ Stop</button>
+            </div>
+            <div class="live-stats">
+                <div class="live-stat">
+                    <div class="stat-emoji" id="liveEmoji">🤔</div>
+                    <div class="stat-label">Detected Emotion</div>
+                    <div class="stat-value" id="currentEmotion">--</div>
+                </div>
+                <div class="live-stat">
+                    <div class="stat-label">Confidence</div>
+                    <div class="stat-value" id="currentConfidence">--</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div id="resultsSection" class="results-section hidden">
+        <h2>✨ Emotion Detected</h2>
+        <div class="emotion-result">
+            <div class="emotion-display">
+                <div id="emotionEmoji" class="emotion-emoji">😊</div>
+                <div class="emotion-info">
+                    <h3 id="detectedEmotion">Happy</h3>
+                    <div class="confidence-bar"><div id="confidenceBar" class="confidence-fill" style="width:0%"></div></div>
+                    <p id="confidenceText" style="font-size:.82rem;color:var(--muted);margin-top:.3rem;">Confidence: --</p>
+                </div>
+            </div>
+        </div>
+        <div class="result-details"><h3>AI Reasoning</h3><p id="reasonText"></p></div>
+        <div class="recommendations-section">
+            <h3>🎯 Your Personalized Picks</h3>
+            <div class="recommendations-grid">
+                <div class="rec-card"><h4>🟢 Spotify Playlists</h4><div id="spotifyList" class="playlist-links"></div></div>
+                <div class="rec-card"><h4>🔴 YouTube Playlists</h4><div id="youtubeList" class="playlist-links"></div></div>
+            </div>
+            <div class="rec-card" style="margin-top:1rem;"><h4>💡 Quotes for You</h4><div id="quotesList" class="quotes-list"></div></div>
+        </div>
+        <div style="margin-top:1.5rem;">
+            <button class="btn btn-outline" onclick="newAnalysis()">🔄 New Scan</button>
+        </div>
+    </div>
+</div>
+
+<footer class="footer"><p>© 2026 Fresh Emotion · Powered by Gemini AI</p></footer>
+<script src="/static/js/auth.js?v=2"></script>
+<script src="/static/js/analysis.js?v=2"></script>
+<script>protectPage();</script>
+</body>
+</html>

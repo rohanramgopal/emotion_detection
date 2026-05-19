@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - EmotiSense</title>
+    <link rel="stylesheet" href="/static/css/style.css?v=2">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="light-mode">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="emoji">🎭</span>
+                <span class="title">EmotiSense</span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/analysis.html">Analysis</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 class="page-title">Your Emotion Dashboard</h1>
+
+        <div class="dashboard-grid">
+            <!-- Quick Stats -->
+            <div class="stats-section">
+                <h2>Statistics</h2>
+                <div class="stats-cards">
+                    <div class="stat-card">
+                        <h3>Total Analyses</h3>
+                        <p id="totalAnalyses" class="stat-value">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Most Detected</h3>
+                        <p id="mostDetected" class="stat-value">--</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Avg Confidence</h3>
+                        <p id="avgConfidence" class="stat-value">--</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Emotion Distribution -->
+            <div class="chart-section">
+                <h2>Emotion Distribution</h2>
+                <canvas id="emotionChart"></canvas>
+            </div>
+
+            <!-- Analysis Type Distribution -->
+            <div class="chart-section">
+                <h2>Analysis Types Used</h2>
+                <canvas id="analysisTypeChart"></canvas>
+            </div>
+
+            <!-- Recent Analyses -->
+            <div class="recent-analyses">
+                <h2>Recent Analyses</h2>
+                <div id="recentList" class="analyses-list">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Provider Performance -->
+            <div class="provider-section">
+                <h2>Provider Performance</h2>
+                <div id="providerStats" class="provider-stats">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Emotion Timeline -->
+            <div class="timeline-section">
+                <h2>Your Emotion Timeline</h2>
+                <canvas id="emotionTimeline"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/auth.js?v=2"></script>
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>
